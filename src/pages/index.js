@@ -1,8 +1,11 @@
 import React, { useState } from "react"
 import { useStats } from "../utils/useStats"
 import { usePop } from "../utils/usePop"
+import moment from "moment"
 
 import SelectBox from "../components/SelectBox"
+
+import "./app.scss"
 
 const Stats = ({ selectedCountry }) => {
   const { stats } = useStats(selectedCountry)
@@ -10,25 +13,54 @@ const Stats = ({ selectedCountry }) => {
   if (stats === "There was an error")
     return (
       <div>
-        <h1>Coronavirus in {selectedCountry}</h1>
-        <p>
-          No virus information for {selectedCountry}. Please select a different
-          country.
-        </p>
+        <div className="no-info">
+          <p style={{ textAlign: "center" }}>
+            There is no virus information for{" "}
+            <span style={{ color: "darkred" }}>{selectedCountry}</span> at this
+            time. Please select a different country.
+          </p>
+        </div>
       </div>
     )
-  if (!stats || !stats.data.confirmed) return <p>Loading</p>
+  if (!stats || !stats.data.confirmed)
+    return <p style={{ color: "white" }}>Loading</p>
+  let time = stats
+    ? moment(stats.data.lastUpdate).format("M/D/YYYY - LT") + " CST"
+    : null
+  console.log(stats)
   return (
     <div>
-      <h1>Coronavirus in {selectedCountry}</h1>
-      <p>Confirmed Cases: {stats.data.confirmed.value}</p>
-      <p>Number of Recovered: {stats.data.recovered.value}</p>
-      <p>Number of Deaths: {stats.data.deaths.value}</p>
-      <p>
-        Percentage of Population Infected:{" "}
-        {((stats.data.confirmed.value / country[0].pop) * 100).toFixed(5) + "%"}{" "}
-        <small>(estimated)</small>
-      </p>
+      <div className="container">
+        <div className="data data-country">
+          <p className="center">
+            <h2 style={{ color: "darkred" }}>{selectedCountry}</h2>
+          </p>
+        </div>
+        <div className="data">
+          <p className="center">
+            Confirmed Cases: {stats.data.confirmed.value}
+          </p>
+        </div>
+        <div className="data">
+          <p className="center">
+            Number of Recovered: {stats.data.recovered.value}
+          </p>
+        </div>
+        <div className="data">
+          <p className="center">Number of Deaths: {stats.data.deaths.value}</p>
+        </div>
+        <div className="data">
+          <p className="center">Percentage of Pop. Infected:</p>
+          <p className="center">
+            {((stats.data.confirmed.value / country[0].pop) * 100).toFixed(5) +
+              "%"}{" "}
+            <small>(estimated)</small>
+          </p>
+        </div>
+        <div className="data">
+          <p className="center">Last Updated: {time}</p>
+        </div>
+      </div>
     </div>
   )
 }
@@ -40,8 +72,11 @@ export default () => {
   }
   return (
     <div>
+      <h1 style={{ textAlign: "center" }}>Coronavirus Population Tracker</h1>
       <Stats selectedCountry={country} />
-      <SelectBox value={country} onChange={handleChange} />
+      <div className="flex-center">
+        <SelectBox value={country} onChange={handleChange} />
+      </div>
     </div>
   )
 }
