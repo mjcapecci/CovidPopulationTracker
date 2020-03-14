@@ -17,7 +17,12 @@ const SelectBox = props => {
     setItems(dataArr)
   }, [])
   return (
-    <select name="Countries" id="countries" onChange={handleChange}>
+    <select
+      name="Countries"
+      id="countries"
+      onChange={handleChange}
+      className="country-select"
+    >
       {items.map(item => {
         return <SelectItem countryName={item} key={keyCounter++} />
       })}
